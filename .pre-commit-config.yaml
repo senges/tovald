@@ -16,7 +16,7 @@ repos:
           - .
         pass_filenames: false
         types: [python]
-      
+
       - id: ruff
         name: ruff
         language: system
@@ -27,3 +27,14 @@ repos:
           - check
         pass_filenames: false
         types: [python]
+
+      - id: yamllint
+        name: yamllint
+        language: system
+        entry: uv
+        args:
+          - run
+          - yamllint
+          - .
+        pass_filenames: false
+        types: [yaml]
