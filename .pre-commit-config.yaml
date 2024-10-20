@@ -15,7 +15,7 @@ repos:
           - --color
           - .
         pass_filenames: false
-        always_run: true
+        types: [python]
       
       - id: ruff
         name: ruff
@@ -26,4 +26,4 @@ repos:
           - ruff
           - check
         pass_filenames: false
-        always_run: true
+        types: [python]
