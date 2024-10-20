@@ -14,6 +14,7 @@ dependencies = [
 [tool.uv]
 dev-dependencies = [
     "black",
+    "pre-commit",
     "ruff",
     "yamllint",
 ]
