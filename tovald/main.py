@@ -1,5 +1,7 @@
 """Main Tovald module."""
 
+import re
+
 from pathlib import Path
 
 
@@ -15,7 +17,21 @@ def validate_documentation_tree(path: Path) -> None:
         path (str): documentation tree root path
     """
 
-    raise NotImplementedError
+    h1 = re.compile(r"(?m)^# (.+)")
+
+    for root, dirnames, filenames in path.walk():
+        if root.stem == ".assets":
+            continue
+
+        if "index.md" not in filenames:
+            raise InvalidDocTreeError
+
+        index = root / "index.md"
+        with index.open(mode="r") as index:
+            index = index.read()
+
+            if len(h1.findall(index)) != 1:
+                raise InvalidDocTreeError
 
 
 def build_sphinx_tree(path: Path) -> None:
