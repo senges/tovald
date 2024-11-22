@@ -39,7 +39,7 @@ def build_sphinx_tree(path: Path) -> None:
 
     Args:
     ----
-        path (str): documentation tree root path
+        path (Path): documentation tree root path
     """
 
     raise NotImplementedError
@@ -50,7 +50,7 @@ def toctree_indexer(path: Path) -> None:
 
     Args:
     ----
-        path (str): documentation tree root path
+        path (Path): documentation tree root path
     """
 
     raise NotImplementedError
