@@ -1,19 +1,36 @@
 """Test suite for main module."""
 
 import pytest
+import shutil
 
+from filecmp import dircmp
 from pathlib import Path
 
-from tovald.main import validate_documentation_tree, InvalidDocTreeError
+from tovald.main import (
+    validate_documentation_tree,
+    toctree_indexer,
+    InvalidDocTreeError,
+)
+
+
+def match_directories(dcmp: dircmp) -> bool:
+    if dcmp.diff_files:
+        return False
+
+    for subdir in dcmp.subdirs.values():
+        if not match_directories(subdir):
+            return False
+
+    return True
+
+
+@pytest.fixture
+def static_path():
+    return Path(__file__).parent / "static"
 
 
 class TestValidateDocumentationTree:
     """Test suite for validate_documentation_tree function"""
-
-    @pytest.fixture
-    def static_path(self):
-        return Path(__file__).parent / "static"
-
 
     def test_validate_documentation_tree_valid_tree(self, static_path):
         """
@@ -65,3 +82,21 @@ class TestBuildSphinxTree:
 
 class TestToctreeIndexer:
     """Test suite for toctree_indexer function"""
+
+    def test_toctree_indexer(self, tmp_path, static_path):
+        """
+        Tests that function produces a properly indexed toc tree structure.
+
+        Given: Documentation tree
+        Expect: Documentation tree with injected toc indexes
+        """
+
+        tmp_path = Path(tmp_path)
+
+        input_path = static_path / "valid_tree/doc"
+        control_path = static_path / "valid_tree/toc"
+
+        shutil.copytree(input_path, tmp_path, dirs_exist_ok=True)
+        toctree_indexer(tmp_path)
+
+        assert match_directories(dircmp(control_path, tmp_path))
