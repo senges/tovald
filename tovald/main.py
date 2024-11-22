@@ -3,6 +3,10 @@
 from pathlib import Path
 
 
+class InvalidDocTreeError(Exception):
+    """Provided documentation tree is invalid somehow"""
+
+
 def validate_documentation_tree(path: Path) -> None:
     """Make sure documentation tree is properly structured.
 
