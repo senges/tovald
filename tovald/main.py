@@ -31,8 +31,8 @@ def validate_documentation_tree(path: Path) -> None:
         with index.open(mode="r") as index:
             index = index.read()
 
-            if len(h1.findall(index)) != 1:
-                raise InvalidDocTreeError
+        if len(h1.findall(index)) != 1:
+            raise InvalidDocTreeError
 
 
 def build_sphinx_tree(path: Path) -> None:
