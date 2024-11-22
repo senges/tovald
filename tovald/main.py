@@ -2,6 +2,7 @@
 
 import re
 
+from jinja2 import Template
 from pathlib import Path
 
 
@@ -53,7 +54,23 @@ def toctree_indexer(path: Path) -> None:
         path (Path): documentation tree root path
     """
 
-    raise NotImplementedError
+    options = ["glob", "hidden", "titlesonly"]
+
+    toctree = Path(__file__).parent / "static/toctree.j2"
+
+    with toctree.open("r") as toctree:
+        template = Template(toctree.read())
+
+    toctree = template.render(options=options)
+
+    for root, dirnames, _ in path.walk():
+        children = [c for c in dirnames if not c.startswith(".")]
+        if not children:
+            continue
+
+        index = root / "index.md"
+        with index.open("a", encoding="utf-8") as index:
+            index.write(toctree)
 
 
 def main() -> None:
