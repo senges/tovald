@@ -2,6 +2,11 @@
 
 import pytest
 
+from pathlib import Path
+
+from tovald.main import validate_documentation_tree, InvalidDocTreeError
+
+
 class TestValidateDocumentationTree:
     """Test suite for validate_documentation_tree function"""
 
@@ -12,7 +17,13 @@ class TestValidateDocumentationTree:
         Given: Valid documentation tree
         Expect: Function returns True
         """
-        assert False
+
+        valid_path = Path(__file__) / "static/valid_tree/doc"
+
+        try:
+            validate_documentation_tree(valid_path)
+        except InvalidDocTreeError:
+            pytest.fail("Documentation tree should be valid.")
 
     def test_validate_documentation_tree_missing_index_node(self):
         """
@@ -21,7 +32,11 @@ class TestValidateDocumentationTree:
         Given: Documentation tree with missing index node
         Expect: Function returns False
         """
-        assert False
+
+        invalid_path = Path(__file__) / "static/missing_index_tree/doc"
+
+        with pytest.raises(InvalidDocTreeError):
+            validate_documentation_tree(invalid_path)
 
     def test_validate_documentation_tree_multiple_heading(self):
         """
@@ -31,7 +46,11 @@ class TestValidateDocumentationTree:
         Given: Documentation tree with one index node have 2 heading 1 token.
         Expect: Function returns False
         """
-        assert False
+
+        invalid_path = Path(__file__) / "static/double_heading_tree/doc"
+
+        with pytest.raises(InvalidDocTreeError):
+            validate_documentation_tree(invalid_path)
 
 
 class TestBuildSphinxTree:
