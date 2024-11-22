@@ -11,6 +11,11 @@ dependencies = [
     "sphinxcontrib-confluencebuilder==2.8",
 ]
 
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
+
 [tool.uv]
 dev-dependencies = [
     "black",
