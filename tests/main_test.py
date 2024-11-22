@@ -10,7 +10,12 @@ from tovald.main import validate_documentation_tree, InvalidDocTreeError
 class TestValidateDocumentationTree:
     """Test suite for validate_documentation_tree function"""
 
-    def test_validate_documentation_tree_valid_tree(self):
+    @pytest.fixture
+    def static_path(self):
+        return Path(__file__).parent / "static"
+
+
+    def test_validate_documentation_tree_valid_tree(self, static_path):
         """
         Tests that function works on a complex valid documentation tree.
 
@@ -18,14 +23,14 @@ class TestValidateDocumentationTree:
         Expect: Function returns True
         """
 
-        valid_path = Path(__file__) / "static/valid_tree/doc"
+        valid_path = static_path / "valid_tree/doc"
 
         try:
             validate_documentation_tree(valid_path)
         except InvalidDocTreeError:
             pytest.fail("Documentation tree should be valid.")
 
-    def test_validate_documentation_tree_missing_index_node(self):
+    def test_validate_documentation_tree_missing_index_node(self, static_path):
         """
         Tests that function detects a missing index node in complex documentation tree.
 
@@ -33,12 +38,13 @@ class TestValidateDocumentationTree:
         Expect: Function returns False
         """
 
-        invalid_path = Path(__file__) / "static/missing_index_tree/doc"
+        invalid_path = static_path / "missing_index_tree/doc"
+        print(invalid_path)
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
 
-    def test_validate_documentation_tree_multiple_heading(self):
+    def test_validate_documentation_tree_multiple_heading(self, static_path):
         """
         Tests that index node with multiple heading 1 is detected.
         This would cause confluence to create multiple pages.
@@ -47,7 +53,7 @@ class TestValidateDocumentationTree:
         Expect: Function returns False
         """
 
-        invalid_path = Path(__file__) / "static/double_heading_tree/doc"
+        invalid_path = static_path / "double_heading_tree/doc"
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
