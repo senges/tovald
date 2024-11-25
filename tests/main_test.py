@@ -126,3 +126,7 @@ class TestToctreeIndexer:
         toctree_indexer(tmp_path)
 
         assert match_directories(dircmp(control_path, tmp_path))
+
+
+class TestPublish:
+    """Test suite for publish function"""

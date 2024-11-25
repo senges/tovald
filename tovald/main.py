@@ -79,6 +79,17 @@ def toctree_indexer(path: Path) -> None:
             index.write(toctree)
 
 
+def publish(path: Path) -> None:
+    """Publish sphinx-formatted documentation.
+
+    Args:
+    ----
+        path (Path): sphinx documentation tree root path
+    """
+
+    raise NotImplementedError
+
+
 def main() -> None:
     """Program entrypoint."""
 
