@@ -1,6 +1,7 @@
 """Main Tovald module."""
 
 import re
+import shutil
 
 from jinja2 import Template
 from pathlib import Path
@@ -43,7 +44,12 @@ def build_sphinx_tree(path: Path) -> None:
         path (Path): documentation tree root path
     """
 
-    raise NotImplementedError
+    resolvpath = Path(__file__).resolve().parent
+
+    shutil.copyfile(resolvpath / "conf.py", path / "conf.py")
+    shutil.copytree(resolvpath / "assets", path / "assets")
+
+    toctree_indexer(path)
 
 
 def toctree_indexer(path: Path) -> None:

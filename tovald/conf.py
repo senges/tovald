@@ -1,0 +1,1 @@
+"""Tovald configuration module."""
