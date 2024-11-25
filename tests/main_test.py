@@ -7,6 +7,7 @@ from filecmp import dircmp
 from pathlib import Path
 
 from tovald.main import (
+    build_sphinx_tree,
     validate_documentation_tree,
     toctree_indexer,
     InvalidDocTreeError,
@@ -78,6 +79,31 @@ class TestValidateDocumentationTree:
 
 class TestBuildSphinxTree:
     """Test suite for build_sphinx_tree function"""
+
+    def test_build_sphinx_tree(self, mocker, tmp_path):
+        """
+        Tests that function produces a properly configured directory
+        for sphinxcontrib-confluencebuilder.
+
+        Given: Documentation path
+        Expect: Valid sphinx directory
+        """
+
+        tmp_path = Path(tmp_path)
+
+        toctree_indexer_patch = mocker.patch("tovald.main.toctree_indexer")
+        build_sphinx_tree(tmp_path)
+        toctree_indexer_patch.assert_called_once_with(tmp_path)
+
+        directory_objects = list(tmp_path.iterdir())
+
+        confpy = tmp_path / "conf.py"
+        assert confpy in directory_objects
+        assert confpy.is_file()
+
+        assets = tmp_path / "assets"
+        assert assets in directory_objects
+        assert assets.is_dir()
 
 
 class TestToctreeIndexer:
