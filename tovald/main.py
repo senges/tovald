@@ -6,6 +6,8 @@ import shutil
 from jinja2 import Template
 from pathlib import Path
 
+from sphinx.application import Sphinx
+
 
 class InvalidDocTreeError(Exception):
     """Provided documentation tree is invalid somehow"""
@@ -87,7 +89,16 @@ def publish(path: Path) -> None:
         path (Path): sphinx documentation tree root path
     """
 
-    raise NotImplementedError
+    app = Sphinx(
+        srcdir=path,
+        confdir=path,
+        doctreedir=path / "_doctree",
+        outdir=path / "xml",
+        buildername="confluence",
+        freshenv=True,
+    )
+
+    app.build(force_all=True)
 
 
 def main() -> None:
