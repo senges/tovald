@@ -8,8 +8,9 @@ from pathlib import Path
 
 from tovald.main import (
     build_sphinx_tree,
-    validate_documentation_tree,
+    publish,
     toctree_indexer,
+    validate_documentation_tree,
     InvalidDocTreeError,
 )
 
@@ -130,3 +131,21 @@ class TestToctreeIndexer:
 
 class TestPublish:
     """Test suite for publish function"""
+
+    def test_publish(self, tmp_path, static_path):
+        """
+        Tests that function produces a reproductible conf tree.
+
+        Given: Sphinx tree
+        Expect: Confluence xml conf tree
+        """
+
+        tmp_path = Path(tmp_path)
+
+        input_path = static_path / "valid_tree/sphinx"
+        control_path = static_path / "valid_tree/xml"
+
+        shutil.copytree(input_path, tmp_path, dirs_exist_ok=True)
+        publish(tmp_path)
+
+        assert match_directories(dircmp(control_path, tmp_path / "xml"))
