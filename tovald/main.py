@@ -2,9 +2,11 @@
 
 import re
 import shutil
+import sys
 
 from jinja2 import Template
 from pathlib import Path
+from tempfile import mkdtemp
 
 from sphinx.application import Sphinx
 
@@ -107,7 +109,18 @@ def publish(path: Path) -> None:
 def main() -> None:
     """Program entrypoint."""
 
-    raise NotImplementedError
+    if len(sys.argv) < 2:
+        print("Missing documentation path")
+        sys.exit(1)
+
+    documentation = Path(sys.argv[1])
+    validate_documentation_tree(documentation)
+
+    output_directory = Path(mkdtemp(suffix="_sphinx"))
+    shutil.copytree(documentation, output_directory, dirs_exist_ok=True)
+
+    build_sphinx_tree(output_directory)
+    publish(output_directory)
 
 
 if __name__ == "__main__":
