@@ -26,3 +26,10 @@ Install pre-commit hooks.
 ```
 $ uv run pre-commit install [--install-hooks]
 ```
+
+## Credits
+
+Tovald is just a modest wrapper around various tools:
+- [sphinx-doc/sphinx](https://github.com/sphinx-doc/sphinx)
+- [sphinx-contrib/confluencebuilder](https://github.com/sphinx-contrib/confluencebuilder)
+- [executablebooks/MyST-Parser](https://github.com/executablebooks/MyST-Parser)
