@@ -9,6 +9,7 @@ from pathlib import Path
 from tovald.main import (
     build_sphinx_tree,
     publish,
+    main,
     toctree_indexer,
     validate_documentation_tree,
     InvalidDocTreeError,
@@ -161,3 +162,42 @@ class TestPublish:
         publish(tmp_path)
 
         assert match_directories(dircmp(control_path, tmp_path / "xml"))
+
+
+class TestMain:
+    """Test suite for main function"""
+
+    def test_main(self, mocker, tmp_path, static_path):
+        """
+        Tests that .
+
+        Given:
+        Expect:
+        """
+
+        tmp_path = Path(tmp_path)
+
+        input_path = static_path / "valid_tree/doc"
+        shutil.copytree(input_path, tmp_path, dirs_exist_ok=True)
+
+        mocker.patch("tovald.main.sys.argv", ["tovald", tmp_path])
+        mocker.patch("tovald.main.publish")
+
+        main()
+
+        assert match_directories(dircmp(input_path, tmp_path))
+
+    def test_main_missing_arg(self, mocker):
+        """
+        Tests that function properly detects if documentation is missing in cli args.
+
+        Given: An invalid of system args
+        Expect: Program exist with non-zero code
+        """
+
+        mocker.patch("tovald.main.sys.argv", ["tovald"])
+
+        with pytest.raises(SystemExit) as system_exit:
+            main()
+
+        assert system_exit.value.code > 0
