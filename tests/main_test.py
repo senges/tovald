@@ -39,7 +39,7 @@ class TestValidateDocumentationTree:
         Tests that function works on a complex valid documentation tree.
 
         Given: Valid documentation tree
-        Expect: Function returns True
+        Expect: Function do not raise InvalidDocTreeError exception
         """
 
         valid_path = static_path / "valid_tree/doc"
@@ -67,7 +67,7 @@ class TestValidateDocumentationTree:
         Tests that function detects a missing index node in complex documentation tree.
 
         Given: Documentation tree with missing index node
-        Expect: Function returns False
+        Expect: Function raises an InvalidDocTreeError exception
         """
 
         invalid_path = static_path / "missing_index_tree/doc"
@@ -81,7 +81,7 @@ class TestValidateDocumentationTree:
         This would cause confluence to create multiple pages.
 
         Given: Documentation tree with one index node have 2 heading 1 token.
-        Expect: Function returns False
+        Expect: Function raises an InvalidDocTreeError exception
         """
 
         invalid_path = static_path / "double_heading_tree/doc"
