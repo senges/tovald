@@ -71,7 +71,6 @@ class TestValidateDocumentationTree:
         """
 
         invalid_path = static_path / "missing_index_tree/doc"
-        print(invalid_path)
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
