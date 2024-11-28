@@ -49,6 +49,19 @@ class TestValidateDocumentationTree:
         except InvalidDocTreeError:
             pytest.fail("Documentation tree should be valid.")
 
+    def test_validate_documentation_tree_path_not_exist(self, static_path):
+        """
+        Tests that function can detect that a documentation path does not exist.
+
+        Given: A wrong documentation path
+        Expect: Function raises an InvalidDocTreeError exception
+        """
+
+        invalid_path = static_path / "definitely/not/existing/doc"
+
+        with pytest.raises(InvalidDocTreeError):
+            validate_documentation_tree(invalid_path)
+
     def test_validate_documentation_tree_missing_index_node(self, static_path):
         """
         Tests that function detects a missing index node in complex documentation tree.
