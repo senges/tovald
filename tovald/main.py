@@ -23,6 +23,9 @@ def validate_documentation_tree(path: Path) -> None:
 
     h1 = re.compile(r"(?m)^# (.+)")
 
+    if not path.is_dir():
+        raise InvalidDocTreeError
+
     for root, dirnames, filenames in path.walk():
         if root.stem == ".assets":
             continue
