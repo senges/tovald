@@ -3,16 +3,15 @@
 import re
 import shutil
 import sys
-
-from jinja2 import Template
 from pathlib import Path
 from tempfile import mkdtemp
 
+from jinja2 import Template
 from sphinx.application import Sphinx
 
 
 class InvalidDocTreeError(Exception):
-    """Provided documentation tree is invalid somehow"""
+    """Provided documentation tree is invalid somehow."""
 
 
 def validate_documentation_tree(path: Path) -> None:
@@ -21,14 +20,14 @@ def validate_documentation_tree(path: Path) -> None:
     Args:
     ----
         path (str): documentation tree root path
-    """
 
+    """
     h1 = re.compile(r"(?m)^# (.+)")
 
     if not path.is_dir():
         raise InvalidDocTreeError
 
-    for root, dirnames, filenames in path.walk():
+    for root, _, filenames in path.walk():
         if root.stem == ".assets":
             continue
 
@@ -37,9 +36,9 @@ def validate_documentation_tree(path: Path) -> None:
 
         index = root / "index.md"
         with index.open(mode="r") as index:
-            index = index.read()
+            raw_index = index.read()
 
-        if len(h1.findall(index)) != 1:
+        if len(h1.findall(raw_index)) != 1:
             raise InvalidDocTreeError
 
 
@@ -49,8 +48,8 @@ def build_sphinx_tree(path: Path) -> None:
     Args:
     ----
         path (Path): documentation tree root path
-    """
 
+    """
     resolvpath = Path(__file__).resolve().parent
 
     shutil.copyfile(resolvpath / "conf.py", path / "conf.py")
@@ -65,8 +64,8 @@ def toctree_indexer(path: Path) -> None:
     Args:
     ----
         path (Path): documentation tree root path
-    """
 
+    """
     options = ["glob", "hidden", "titlesonly"]
 
     toctree = Path(__file__).parent / "static/toctree.j2"
@@ -92,8 +91,8 @@ def publish(path: Path) -> None:
     Args:
     ----
         path (Path): sphinx documentation tree root path
-    """
 
+    """
     app = Sphinx(
         srcdir=path,
         confdir=path,
@@ -108,9 +107,8 @@ def publish(path: Path) -> None:
 
 def main() -> None:
     """Program entrypoint."""
-
-    if len(sys.argv) < 2:
-        print("Missing documentation path")
+    if len(sys.argv) < 2:  # noqa: PLR2004
+        print("Missing documentation path")  # noqa: T201
         sys.exit(1)
 
     documentation = Path(sys.argv[1])
