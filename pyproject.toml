@@ -11,6 +11,13 @@ dependencies = [
     "sphinxcontrib-confluencebuilder==2.8",
 ]
 
+[project.scripts]
+tovald = "tovald.main:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [tool.pytest.ini_options]
 pythonpath = [
   "."
@@ -34,6 +41,12 @@ ignore = [
   "S101",   # assert
   "INP001", # implicit-namespace-package
   "SIM110", # reimplemented-builtin
+]
+
+[tool.setuptools.package-data]
+tovald = [
+  "static/*", "static/.*",
+  "assets/*", "assets/.*",
 ]
 
 [tool.uv]
