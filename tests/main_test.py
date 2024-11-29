@@ -1,22 +1,24 @@
 """Test suite for main module."""
 
-import pytest
 import shutil
-
 from filecmp import dircmp
 from pathlib import Path
 
+import pytest
+from pytest_mock import MockerFixture
+
 from tovald.main import (
+    InvalidDocTreeError,
     build_sphinx_tree,
-    publish,
     main,
+    publish,
     toctree_indexer,
     validate_documentation_tree,
-    InvalidDocTreeError,
 )
 
 
 def match_directories(dcmp: dircmp) -> bool:
+    """Check if directories match."""
     if dcmp.diff_files:
         return False
 
@@ -28,21 +30,20 @@ def match_directories(dcmp: dircmp) -> bool:
 
 
 @pytest.fixture
-def static_path():
+def static_path() -> Path:
+    """Test static data folder."""
     return Path(__file__).parent / "static"
 
 
 class TestValidateDocumentationTree:
-    """Test suite for validate_documentation_tree function"""
+    """Test suite for validate_documentation_tree function."""
 
-    def test_validate_documentation_tree_valid_tree(self, static_path):
-        """
-        Tests that function works on a complex valid documentation tree.
+    def test_validate_documentation_tree_valid_tree(self, static_path: Path) -> None:
+        """Tests that function works on a complex valid documentation tree.
 
         Given: Valid documentation tree
         Expect: Function do not raise InvalidDocTreeError exception
         """
-
         valid_path = static_path / "valid_tree/doc"
 
         try:
@@ -50,41 +51,36 @@ class TestValidateDocumentationTree:
         except InvalidDocTreeError:
             pytest.fail("Documentation tree should be valid.")
 
-    def test_validate_documentation_tree_path_not_exist(self, static_path):
-        """
-        Tests that function can detect that a documentation path does not exist.
+    def test_validate_documentation_tree_path_not_exist(self, static_path: Path) -> None:
+        """Tests that function can detect that a documentation path does not exist.
 
         Given: A wrong documentation path
         Expect: Function raises an InvalidDocTreeError exception
         """
-
         invalid_path = static_path / "definitely/not/existing/doc"
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
 
-    def test_validate_documentation_tree_missing_index_node(self, static_path):
-        """
-        Tests that function detects a missing index node in complex documentation tree.
+    def test_validate_documentation_tree_missing_index_node(self, static_path: Path) -> None:
+        """Tests that function detects a missing index node in complex documentation tree.
 
         Given: Documentation tree with missing index node
         Expect: Function raises an InvalidDocTreeError exception
         """
-
         invalid_path = static_path / "missing_index_tree/doc"
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
 
-    def test_validate_documentation_tree_multiple_heading(self, static_path):
-        """
-        Tests that index node with multiple heading 1 is detected.
+    def test_validate_documentation_tree_multiple_heading(self, static_path: Path) -> None:
+        """Tests that index node with multiple heading 1 is detected.
+
         This would cause confluence to create multiple pages.
 
         Given: Documentation tree with one index node have 2 heading 1 token.
         Expect: Function raises an InvalidDocTreeError exception
         """
-
         invalid_path = static_path / "double_heading_tree/doc"
 
         with pytest.raises(InvalidDocTreeError):
@@ -92,19 +88,14 @@ class TestValidateDocumentationTree:
 
 
 class TestBuildSphinxTree:
-    """Test suite for build_sphinx_tree function"""
+    """Test suite for build_sphinx_tree function."""
 
-    def test_build_sphinx_tree(self, mocker, tmp_path):
-        """
-        Tests that function produces a properly configured directory
-        for sphinxcontrib-confluencebuilder.
+    def test_build_sphinx_tree(self, mocker: MockerFixture, tmp_path: Path) -> None:
+        """Tests that function produces a properly configured directory for confluencebuilder.
 
         Given: Documentation path
         Expect: Valid sphinx directory
         """
-
-        tmp_path = Path(tmp_path)
-
         toctree_indexer_patch = mocker.patch("tovald.main.toctree_indexer")
         build_sphinx_tree(tmp_path)
         toctree_indexer_patch.assert_called_once_with(tmp_path)
@@ -121,18 +112,14 @@ class TestBuildSphinxTree:
 
 
 class TestToctreeIndexer:
-    """Test suite for toctree_indexer function"""
+    """Test suite for toctree_indexer function."""
 
-    def test_toctree_indexer(self, tmp_path, static_path):
-        """
-        Tests that function produces a properly indexed toc tree structure.
+    def test_toctree_indexer(self, tmp_path: Path, static_path: Path) -> None:
+        """Tests that function produces a properly indexed toc tree structure.
 
         Given: Documentation tree
         Expect: Documentation tree with injected toc indexes
         """
-
-        tmp_path = Path(tmp_path)
-
         input_path = static_path / "valid_tree/doc"
         control_path = static_path / "valid_tree/toc"
 
@@ -143,18 +130,14 @@ class TestToctreeIndexer:
 
 
 class TestPublish:
-    """Test suite for publish function"""
+    """Test suite for publish function."""
 
-    def test_publish(self, tmp_path, static_path):
-        """
-        Tests that function produces a reproductible conf tree.
+    def test_publish(self, tmp_path: Path, static_path: Path) -> None:
+        """Tests that function produces a reproductible conf tree.
 
         Given: Sphinx tree
         Expect: Confluence xml conf tree
         """
-
-        tmp_path = Path(tmp_path)
-
         input_path = static_path / "valid_tree/sphinx"
         control_path = static_path / "valid_tree/xml"
 
@@ -165,18 +148,14 @@ class TestPublish:
 
 
 class TestMain:
-    """Test suite for main function"""
+    """Test suite for main function."""
 
-    def test_main(self, mocker, tmp_path, static_path):
-        """
-        Tests that .
+    def test_main(self, mocker: MockerFixture, tmp_path: Path, static_path: Path) -> None:
+        """Tests that .
 
         Given:
         Expect:
         """
-
-        tmp_path = Path(tmp_path)
-
         input_path = static_path / "valid_tree/doc"
         shutil.copytree(input_path, tmp_path, dirs_exist_ok=True)
 
@@ -187,14 +166,12 @@ class TestMain:
 
         assert match_directories(dircmp(input_path, tmp_path))
 
-    def test_main_missing_arg(self, mocker):
-        """
-        Tests that function properly detects if documentation is missing in cli args.
+    def test_main_missing_arg(self, mocker: MockerFixture) -> None:
+        """Tests that function properly detects if documentation is missing in cli args.
 
         Given: An invalid of system args
         Expect: Program exist with non-zero code
         """
-
         mocker.patch("tovald.main.sys.argv", ["tovald"])
 
         with pytest.raises(SystemExit) as system_exit:
