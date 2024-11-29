@@ -16,6 +16,20 @@ pythonpath = [
   "."
 ]
 
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+  "S101",   # assert
+  "INP001", # implicit-namespace-package
+  "SIM110", # reimplemented-builtin
+]
+
 [tool.uv]
 dev-dependencies = [
     "black",
