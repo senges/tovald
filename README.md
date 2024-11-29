@@ -1,6 +1,6 @@
 # Tovald
 
-Push rich Markdown documentation to Confluence.
+Publish rich Markdown documentation to Confluence.
 
 ## usage (beta)
 
@@ -13,6 +13,37 @@ Export following variables :
 ```
 $ uv run python tovald/main.py DOCUMENTATION_PATH
 ```
+
+## Documentation sctructure
+
+In Confluence, documentation is organized using a hierarchical structure of pages and sub-pages.
+
+* Page 1
+    * Sub-page 1
+    * Sub-page 2
+        * Sub-sub-page 1
+* Page 2
+    * Sub-page 3
+
+Similarly, in tovald documentation structure, each page is represented as folder containing an `index.md` file and an optional `.assets` folder.
+* The `index.md` file holds the content of the page, and the first-level `# heading` is used as the page title in the page tree view.
+* The `.assets` folder contains any static asset required by the given index page.
+
+```
+doc
+├── index.md
+└── operational-guide
+    ├── .assets
+    │   └── demo.png
+    └── index.md
+```
+
+## Editorial guide
+
+Standard markdown is supported, as well as [MyST flavored syntax](https://myst-parser.readthedocs.io/en/latest/index.html).
+
+Most Confluence built-in features are also available via [confluencebuilder](https://sphinxcontrib-confluencebuilder.readthedocs.io)
+(ie. jira integration, emoticon, mentions, macros, ...).
 
 ## Contribution
 
