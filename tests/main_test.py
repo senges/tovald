@@ -151,20 +151,25 @@ class TestMain:
     """Test suite for main function."""
 
     def test_main(self, mocker: MockerFixture, tmp_path: Path, static_path: Path) -> None:
-        """Tests that .
+        """Tests that main function perlerly chain things together.
 
-        Given:
-        Expect:
+        Given: Documentation path
+        Expect: Enhanced copy of this documentation to publish
         """
         input_path = static_path / "valid_tree/doc"
-        shutil.copytree(input_path, tmp_path, dirs_exist_ok=True)
+        documentation_path = tmp_path / "documentation"
+        mkdtemp_path = tmp_path / "mkdtemp"
 
-        mocker.patch("tovald.main.sys.argv", ["tovald", tmp_path])
+        shutil.copytree(input_path, documentation_path)
+
+        mocker.patch("tovald.main.sys.argv", ["tovald", documentation_path])
         mocker.patch("tovald.main.publish")
+        mocker.patch("tovald.main.mkdtemp").return_value = mkdtemp_path
 
         main()
 
-        assert match_directories(dircmp(input_path, tmp_path))
+        assert match_directories(dircmp(input_path, documentation_path))
+        assert match_directories(dircmp(static_path / "valid_tree/toc", mkdtemp_path))
 
     def test_main_missing_arg(self, mocker: MockerFixture) -> None:
         """Tests that function properly detects if documentation is missing in cli args.
