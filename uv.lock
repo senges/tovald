@@ -880,7 +880,7 @@ wheels = [
 [[package]]
 name = "tovald"
 version = "0.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "myst-parser" },
     { name = "sphinx" },
