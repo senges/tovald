@@ -1,0 +1,33 @@
+---
+
+name: Run linter and tests
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  uv-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install the project
+        run: uv sync --dev
+
+      - name: Run tests
+        run: uv run pytest --verbose tests
+
+      - name: Run ruff format check
+        run: uv run ruff format --diff --check .
+
+      - name: Run ruff check
+        run: uv run ruff check .
