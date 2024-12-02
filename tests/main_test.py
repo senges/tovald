@@ -162,7 +162,7 @@ class TestMain:
 
         shutil.copytree(input_path, documentation_path)
 
-        mocker.patch("tovald.main.sys.argv", ["tovald", documentation_path])
+        mocker.patch("tovald.main.argparse._sys.argv", ["tovald", str(documentation_path)])
         mocker.patch("tovald.main.publish")
         mocker.patch("tovald.main.mkdtemp").return_value = mkdtemp_path
 
@@ -177,7 +177,7 @@ class TestMain:
         Given: An invalid of system args
         Expect: Program exist with non-zero code
         """
-        mocker.patch("tovald.main.sys.argv", ["tovald"])
+        mocker.patch("tovald.main.argparse._sys.argv", ["tovald"])
 
         with pytest.raises(SystemExit) as system_exit:
             main()
