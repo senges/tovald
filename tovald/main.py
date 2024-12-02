@@ -1,13 +1,15 @@
 """Main Tovald module."""
 
+import argparse
 import re
 import shutil
-import sys
 from pathlib import Path
 from tempfile import mkdtemp
 
 from jinja2 import Template
 from sphinx.application import Sphinx
+
+from tovald import __version__
 
 
 class InvalidDocTreeError(Exception):
@@ -107,11 +109,13 @@ def publish(path: Path) -> None:
 
 def main() -> None:
     """Program entrypoint."""
-    if len(sys.argv) < 2:  # noqa: PLR2004
-        print("Missing documentation path")  # noqa: T201
-        sys.exit(1)
+    parser = argparse.ArgumentParser()
 
-    documentation = Path(sys.argv[1])
+    parser.add_argument("DOCUMENTATION")
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
+    args = parser.parse_args()
+
+    documentation = Path(args.DOCUMENTATION)
     validate_documentation_tree(documentation)
 
     output_directory = Path(mkdtemp(suffix="_sphinx"))
