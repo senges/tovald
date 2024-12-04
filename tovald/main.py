@@ -54,10 +54,10 @@ def build_sphinx_tree(path: Path) -> None:
     """
     resolvpath = Path(__file__).resolve().parent
 
+    toctree_indexer(path)
+
     shutil.copyfile(resolvpath / "conf.py", path / "conf.py")
     shutil.copytree(resolvpath / "assets", path / "assets")
-
-    toctree_indexer(path)
 
 
 def toctree_indexer(path: Path) -> None:
