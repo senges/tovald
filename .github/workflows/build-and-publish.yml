@@ -3,10 +3,8 @@
 name: Build python package and push it to PiPy
 
 on:
-  push:
-    branches: ["main"]
   create:
-    tags: ["*"]
+    tags: ["v*"]
 
 jobs:
   uv-check:
