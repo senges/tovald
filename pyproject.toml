@@ -3,12 +3,19 @@ name = "tovald"
 version = "0.1.0"
 description = "Publish rich markdown documentation to Confluence"
 readme = "README.md"
+authors = [
+    {name="Charles SENGES", email="charles.senges.io+github@protonmail.com"}
+]
+license = {text = "GNU GPLv3+"}
 requires-python = ">=3.12"
 dependencies = [
     "myst-parser==4.0",
     "sphinx==8.1",
     "sphinx-toolbox==3.8",
     "sphinxcontrib-confluencebuilder==2.8",
+]
+classifiers = [
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 
 [project.scripts]
@@ -42,6 +49,9 @@ ignore = [
   "INP001", # implicit-namespace-package
   "SIM110", # reimplemented-builtin
 ]
+
+[tool.setuptools]
+license-files = []
 
 [tool.setuptools.package-data]
 tovald = [
