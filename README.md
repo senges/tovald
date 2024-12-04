@@ -2,7 +2,9 @@
 
 Publish rich Markdown documentation to Confluence.
 
-## usage (beta)
+## usage (alpha)
+
+Install tovald with `pipx install tovald` or run virtualenv `uv run tovald`.
 
 Export following variables :
 - `CONFLUENCE_SERVER_URL`: confluence instance URL
@@ -11,7 +13,14 @@ Export following variables :
 - `CONFLUENCE_PAT`: service account personal access token
 
 ```
-$ uv run python tovald/main.py DOCUMENTATION_PATH
+usage: tovald [-h] [-v] DOCUMENTATION
+
+positional arguments:
+  DOCUMENTATION
+
+options:
+  -h, --help     show this help message and exit
+  -v, --version  show program's version number and exit
 ```
 
 ## Documentation sctructure
