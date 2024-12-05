@@ -106,10 +106,6 @@ class TestBuildSphinxTree:
         assert confpy in directory_objects
         assert confpy.is_file()
 
-        assets = tmp_path / "assets"
-        assert assets in directory_objects
-        assert assets.is_dir()
-
 
 class TestToctreeIndexer:
     """Test suite for toctree_indexer function."""

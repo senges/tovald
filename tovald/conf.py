@@ -18,7 +18,7 @@ confluence_space_key = os.environ.get("CONFLUENCE_SPACE_KEY")
 confluence_parent_page = os.environ.get("CONFLUENCE_PARENT_PAGE")
 confluence_publish_token = os.environ.get("CONFLUENCE_PAT")
 
-confluence_header_file = "assets/templates/header.tpl"
+confluence_page_generation_notice = True
 
 # Auto-generated heading anchors depth.
 # Max value for ATX Headings according to Markdown spec.

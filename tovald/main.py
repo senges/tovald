@@ -57,7 +57,6 @@ def build_sphinx_tree(path: Path) -> None:
     toctree_indexer(path)
 
     shutil.copyfile(resolvpath / "conf.py", path / "conf.py")
-    shutil.copytree(resolvpath / "assets", path / "assets")
 
 
 def toctree_indexer(path: Path) -> None:
