@@ -2,6 +2,11 @@
 
 import os
 
+
+def getenv(env: str) -> str:
+    """Environment variable grab convenience."""
+    return os.environ.get(env, "")
+
 extensions = [
     "myst_parser",
     "sphinxcontrib.confluencebuilder",
@@ -13,10 +18,10 @@ confluence_page_hierarchy = True
 confluence_disable_notifications = True
 confluence_disable_autogen_title = True
 
-confluence_server_url = os.environ.get("CONFLUENCE_SERVER_URL")
-confluence_space_key = os.environ.get("CONFLUENCE_SPACE_KEY")
-confluence_parent_page = os.environ.get("CONFLUENCE_PARENT_PAGE")
-confluence_publish_token = os.environ.get("CONFLUENCE_PAT")
+confluence_server_url = getenv("CONFLUENCE_SERVER_URL")
+confluence_space_key = getenv("CONFLUENCE_SPACE_KEY")
+confluence_parent_page = getenv("CONFLUENCE_PARENT_PAGE")
+confluence_publish_token = getenv("CONFLUENCE_PAT")
 
 confluence_page_generation_notice = True
 
