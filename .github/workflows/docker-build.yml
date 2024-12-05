@@ -24,4 +24,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ghcr.io/senges/tovald:${{ GITHUB_REF }}
+          tags: ghcr.io/senges/tovald:${{ github.ref }}
