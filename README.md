@@ -11,6 +11,7 @@ Export following variables :
 - `CONFLUENCE_SPACE_KEY`: target confluence space
 - `CONFLUENCE_PARENT_PAGE` (optional): any parent page in given space
 - `CONFLUENCE_PAT`: service account personal access token
+- `CONFLUENCE_SOURCES_URL` (optional): sources repository URL
 
 ```
 usage: tovald [-h] [-v] DOCUMENTATION
