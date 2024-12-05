@@ -7,6 +7,7 @@ def getenv(env: str) -> str:
     """Environment variable grab convenience."""
     return os.environ.get(env, "")
 
+
 extensions = [
     "myst_parser",
     "sphinxcontrib.confluencebuilder",
