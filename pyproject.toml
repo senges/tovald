@@ -1,6 +1,6 @@
 [project]
 name = "tovald"
-version = "0.1.1"
+version = "0.1.2"
 description = "Publish rich markdown documentation to Confluence"
 readme = "README.md"
 authors = [
