@@ -24,6 +24,9 @@ confluence_parent_page = getenv("CONFLUENCE_PARENT_PAGE")
 confluence_publish_token = getenv("CONFLUENCE_PAT")
 
 confluence_page_generation_notice = True
+confluence_sourcelink = {}
+if sources := getenv("CONFLUENCE_SOURCES_URL"):
+    confluence_sourcelink["url"] = sources
 
 # Auto-generated heading anchors depth.
 # Max value for ATX Headings according to Markdown spec.
