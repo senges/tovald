@@ -55,8 +55,8 @@ license-files = []
 
 [tool.setuptools.package-data]
 tovald = [
-  "static/*", "static/.*",
-  "assets/*", "assets/.*",
+  "static/*",
+  "assets/templates/*.tpl",
 ]
 
 [tool.uv]
