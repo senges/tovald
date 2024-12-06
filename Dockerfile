@@ -11,4 +11,6 @@ FROM python:3.13-alpine
 
 COPY --from=packager /app/.venv /app/.venv
 
+ENV PATH="${PATH}:/app/.venv/bin"
+
 ENTRYPOINT ["/app/.venv/bin/tovald"]
