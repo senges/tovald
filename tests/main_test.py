@@ -51,40 +51,54 @@ class TestValidateDocumentationTree:
         except InvalidDocTreeError:
             pytest.fail("Documentation tree should be valid.")
 
-    def test_validate_documentation_tree_path_not_exist(self, static_path: Path) -> None:
+    def test_validate_documentation_tree_path_not_exist(self, mocker: MockerFixture, static_path: Path) -> None:
         """Tests that function can detect that a documentation path does not exist.
 
         Given: A wrong documentation path
-        Expect: Function raises an InvalidDocTreeError exception
+        Expect: Function calls panic with not a directory message
         """
         invalid_path = static_path / "definitely/not/existing/doc"
+        panic_patch = mocker.patch("tovald.main.panic")
+        panic_patch.side_effect = InvalidDocTreeError
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
 
-    def test_validate_documentation_tree_missing_index_node(self, static_path: Path) -> None:
+        panic_patch.assert_called_once_with("Documentation path is not a directory.")
+
+    def test_validate_documentation_tree_missing_index_node(self, mocker: MockerFixture, static_path: Path) -> None:
         """Tests that function detects a missing index node in complex documentation tree.
 
         Given: Documentation tree with missing index node
-        Expect: Function raises an InvalidDocTreeError exception
+        Expect: Function calls panic with missing index message
         """
         invalid_path = static_path / "missing_index_tree/doc"
+        panic_patch = mocker.patch("tovald.main.panic")
+        panic_patch.side_effect = InvalidDocTreeError
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
 
-    def test_validate_documentation_tree_multiple_heading(self, static_path: Path) -> None:
+        panic_patch.assert_called_once_with(f"Missing index in {invalid_path / "level-1/level-2"}.")
+
+    def test_validate_documentation_tree_multiple_heading(self, mocker: MockerFixture, static_path: Path) -> None:
         """Tests that index node with multiple heading 1 is detected.
 
         This would cause confluence to create multiple pages.
 
         Given: Documentation tree with one index node have 2 heading 1 token.
-        Expect: Function raises an InvalidDocTreeError exception
+        Expect: Function calls panic with multiple headings message
         """
         invalid_path = static_path / "double_heading_tree/doc"
+        panic_patch = mocker.patch("tovald.main.panic")
+        panic_patch.side_effect = InvalidDocTreeError
 
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
+
+        panic_patch.assert_called_once_with(
+            f"Multiple h1 headings found in {invalid_path / "level-1/level-2/level-3"} index."
+        )
 
 
 class TestBuildSphinxTree:
