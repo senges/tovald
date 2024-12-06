@@ -3,6 +3,7 @@
 import argparse
 import re
 import shutil
+import sys
 from pathlib import Path
 from tempfile import mkdtemp
 
@@ -16,6 +17,18 @@ class InvalidDocTreeError(Exception):
     """Provided documentation tree is invalid somehow."""
 
 
+def panic(message: str) -> None:
+    """Program Panic.
+
+    Args:
+    ----
+        message (str): error message to display before exit
+
+    """
+    print(message)
+    sys.exit(1)
+
+
 def validate_documentation_tree(path: Path) -> None:
     """Make sure documentation tree is properly structured.
 
@@ -27,21 +40,21 @@ def validate_documentation_tree(path: Path) -> None:
     h1 = re.compile(r"(?m)^# (.+)")
 
     if not path.is_dir():
-        raise InvalidDocTreeError
+        panic("Documentation path is not a directory.")
 
     for root, _, filenames in path.walk():
         if root.stem == ".assets":
             continue
 
         if "index.md" not in filenames:
-            raise InvalidDocTreeError
+            panic(f"Missing index in {root}.")
 
         index = root / "index.md"
         with index.open(mode="r") as index:
             raw_index = index.read()
 
         if len(h1.findall(raw_index)) != 1:
-            raise InvalidDocTreeError
+            panic(f"Multiple h1 headings found in {root} index.")
 
 
 def build_sphinx_tree(path: Path) -> None:
