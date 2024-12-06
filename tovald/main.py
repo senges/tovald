@@ -1,7 +1,6 @@
 """Main Tovald module."""
 
 import argparse
-import re
 import shutil
 import sys
 from pathlib import Path
@@ -37,8 +36,6 @@ def validate_documentation_tree(path: Path) -> None:
         path (str): documentation tree root path
 
     """
-    h1 = re.compile(r"(?m)^# (.+)")
-
     if not path.is_dir():
         panic("Documentation path is not a directory.")
 
@@ -48,13 +45,6 @@ def validate_documentation_tree(path: Path) -> None:
 
         if "index.md" not in filenames:
             panic(f"Missing index in {root}.")
-
-        index = root / "index.md"
-        with index.open(mode="r") as index:
-            raw_index = index.read()
-
-        if len(h1.findall(raw_index)) != 1:
-            panic(f"Multiple h1 headings found in {root} index.")
 
 
 def build_sphinx_tree(path: Path) -> None:

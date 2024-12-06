@@ -81,6 +81,7 @@ class TestValidateDocumentationTree:
 
         panic_patch.assert_called_once_with(f"Missing index in {invalid_path / "level-1/level-2"}.")
 
+    @pytest.mark.skip(reason="Removed due to improper implementation.")
     def test_validate_documentation_tree_multiple_heading(self, mocker: MockerFixture, static_path: Path) -> None:
         """Tests that index node with multiple heading 1 is detected.
 
