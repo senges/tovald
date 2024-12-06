@@ -6,10 +6,10 @@ Publish rich Markdown documentation to Confluence.
 
 Install tovald with `pipx install tovald` or run virtualenv `uv run tovald`.
 
-Export following variables :
+Export the following variables :
 - `CONFLUENCE_SERVER_URL`: confluence instance URL
 - `CONFLUENCE_SPACE_KEY`: target confluence space
-- `CONFLUENCE_PARENT_PAGE` (optional): any parent page in given space
+- `CONFLUENCE_PARENT_PAGE` (optional): any parent page in a given space
 - `CONFLUENCE_PAT`: service account personal access token
 - `CONFLUENCE_SOURCES_URL` (optional): sources repository URL
 
@@ -24,7 +24,7 @@ options:
   -v, --version  show program's version number and exit
 ```
 
-## Documentation sctructure
+## Documentation structure
 
 In Confluence, documentation is organized using a hierarchical structure of pages and sub-pages.
 
@@ -35,7 +35,7 @@ In Confluence, documentation is organized using a hierarchical structure of page
 * Page 2
     * Sub-page 3
 
-Similarly, in tovald documentation structure, each page is represented as folder containing an `index.md` file and an optional `.assets` folder.
+Similarly, in tovald documentation structure, each page is represented as a folder containing an `index.md` file and an optional `.assets` folder.
 * The `index.md` file holds the content of the page, and the first-level `# heading` is used as the page title in the page tree view.
 * The `.assets` folder contains any static asset required by the given index page.
 
@@ -53,7 +53,7 @@ doc
 Standard markdown is supported, as well as [MyST flavored syntax](https://myst-parser.readthedocs.io/en/latest/index.html).
 
 Most Confluence built-in features are also available via [confluencebuilder](https://sphinxcontrib-confluencebuilder.readthedocs.io)
-(ie. jira integration, emoticon, mentions, macros, ...).
+(ie. Jira integration, emoticon, mentions, macros, ...).
 
 ## Contribution
 
