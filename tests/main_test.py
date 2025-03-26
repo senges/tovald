@@ -11,6 +11,7 @@ from tovald.main import (
     InvalidDocTreeError,
     build_sphinx_tree,
     main,
+    panic,
     publish,
     toctree_indexer,
     validate_documentation_tree,
@@ -33,6 +34,26 @@ def match_directories(dcmp: dircmp) -> bool:
 def static_path() -> Path:
     """Test static data folder."""
     return Path(__file__).parent / "static"
+
+
+class TestLogging:
+    """Test suite for logging features."""
+
+    def test_panic_sys_exit(self, mocker: MockerFixture) -> None:
+        """Tests that panic properly exits program with error exit code."""
+        exit_patch = mocker.patch("tovald.main.sys.exit")
+
+        panic("")
+        exit_patch.assert_called_once_with(1)
+
+    def test_panic_print(self, mocker: MockerFixture) -> None:
+        """Tests that panic yields error message."""
+        error_message = "test_panic_print"
+        mocker.patch("tovald.main.sys.exit")
+        print_patch = mocker.patch("tovald.main.print")
+
+        panic("test_panic_print")
+        print_patch.assert_called_once_with(error_message)
 
 
 class TestValidateDocumentationTree:
