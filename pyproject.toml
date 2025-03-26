@@ -6,16 +6,14 @@ readme = "README.md"
 authors = [
     {name="Charles SENGES", email="charles.senges.io+github@protonmail.com"}
 ]
-license = {text = "GNU GPLv3+"}
+license = "GPL-3.0-or-later"
+
 requires-python = ">=3.12"
 dependencies = [
     "myst-parser==4.0",
     "sphinx==8.1",
     "sphinx-toolbox==3.8",
     "sphinxcontrib-confluencebuilder==2.8",
-]
-classifiers = [
-  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 
 [project.scripts]
@@ -29,6 +27,9 @@ build-backend = "setuptools.build_meta"
 pythonpath = [
   "."
 ]
+
+[tool.black]
+line-length = 120
 
 [tool.ruff]
 line-length = 120
@@ -52,7 +53,10 @@ ignore = [
 ]
 
 [tool.setuptools]
-license-files = []
+packages = [
+  "tovald",
+  "tovald.compiler",
+]
 
 [tool.setuptools.package-data]
 tovald = [
