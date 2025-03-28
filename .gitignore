@@ -1,4 +1,24 @@
+# Python build
 __pycache__
 dist/
 *.egg
 *.egg-info/
+
+# Python test & coverage
+.coverage
+.coverage.*
+coverage.*
+*.cover
+.pytest_cache
+
+# Python lint
+.ruff_cache/
+
+# Python dev environement
+.env
+.envrc
+.venv
+*.bak
+*.tmp
+*.tmp.sh
+TODO.*
