@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write 
+  id-token: write
 
 jobs:
   uv-check:
@@ -32,4 +32,4 @@ jobs:
         run: uv build
 
       - name: Publish package
-        run: uv publish  
+        run: uv publish

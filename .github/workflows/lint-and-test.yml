@@ -5,6 +5,7 @@ name: Run linter and tests
 on:
   push:
     branches: ["main"]
+  pull_request:
 
 jobs:
   uv-check:
