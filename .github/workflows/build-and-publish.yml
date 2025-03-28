@@ -3,7 +3,7 @@
 name: Build python package and push it to PiPy
 
 on:
-  create:
+  push:
     tags: ["v*"]
 
 permissions:
