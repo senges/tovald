@@ -67,8 +67,9 @@ tovald = [
 dev-dependencies = [
     "black",
     "pre-commit",
-    "pytest-mock>=3.14.0",
     "pytest>=8.3.3",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
     "ruff",
     "yamllint",
 ]
