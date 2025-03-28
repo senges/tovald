@@ -31,6 +31,14 @@ pythonpath = [
 [tool.black]
 line-length = 120
 
+[tool.coverage.run]
+relative_files = true
+omit = [
+  "tovald/conf.py",
+  "tests/*",
+  "*/*.bak/*",
+]
+
 [tool.ruff]
 line-length = 120
 target-version = "py312"

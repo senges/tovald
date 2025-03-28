@@ -127,5 +127,5 @@ def main() -> None:
     publish(output_directory)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
