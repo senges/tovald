@@ -10,7 +10,9 @@ from pytest_mock import MockerFixture
 from tovald.main import (
     InvalidDocTreeError,
     build_sphinx_tree,
+    cleanup,
     main,
+    make_sphinx,
     panic,
     publish,
     toctree_indexer,
@@ -100,7 +102,7 @@ class TestValidateDocumentationTree:
         with pytest.raises(InvalidDocTreeError):
             validate_documentation_tree(invalid_path)
 
-        panic_patch.assert_called_once_with(f"Missing index in {invalid_path / "level-1/level-2"}.")
+        panic_patch.assert_called_once_with(f"Missing index in {invalid_path / 'level-1/level-2'}.")
 
     @pytest.mark.skip(reason="Removed due to improper implementation.")
     def test_validate_documentation_tree_multiple_heading(self, mocker: MockerFixture, static_path: Path) -> None:
@@ -119,7 +121,7 @@ class TestValidateDocumentationTree:
             validate_documentation_tree(invalid_path)
 
         panic_patch.assert_called_once_with(
-            f"Multiple h1 headings found in {invalid_path / "level-1/level-2/level-3"} index."
+            f"Multiple h1 headings found in {invalid_path / 'level-1/level-2/level-3'} index."
         )
 
 
@@ -177,6 +179,139 @@ class TestPublish:
         publish(tmp_path)
 
         assert match_directories(dircmp(control_path, tmp_path / "xml"))
+
+
+class TestMakeSphinx:
+    """Test suite for make_sphinx function."""
+
+    def test_make_sphinx_returns_sphinx_instance(self, mocker: MockerFixture, tmp_path: Path) -> None:
+        """Tests that function returns a proper Sphinx instance.
+
+        Given: A documentation path
+        Expect: A Sphinx application instance with correct configurations
+        """
+        (tmp_path / "conf.py").write_text("master_doc = 'index'\n")
+
+        sphinx_mock = mocker.patch("tovald.main.Sphinx")
+        make_sphinx(tmp_path)
+
+        sphinx_mock.assert_called_once_with(
+            srcdir=tmp_path,
+            confdir=tmp_path,
+            doctreedir=tmp_path / "_doctree",
+            outdir=tmp_path / "xml",
+            buildername="confluence",
+            freshenv=True,
+        )
+
+
+class TestCleanup:
+    """Test suite for cleanup function."""
+
+    def test_cleanup_no_child_pages(self, mocker: MockerFixture, tmp_path: Path) -> None:
+        """Tests cleanup behavior when no child pages exist.
+
+        Given: A documentation path with no child pages
+        Expect: Function connects to Confluence and reports no pages found
+        """
+        (tmp_path / "conf.py").write_text("master_doc = 'index'\n")
+
+        mock_sphinx = mocker.Mock()
+        mock_publisher = mocker.Mock()
+
+        mock_sphinx.builder.publisher = None
+        mocker.patch("tovald.main.make_sphinx", return_value=mock_sphinx)
+        mocker.patch("tovald.main.ConfluencePublisher", return_value=mock_publisher)
+        mock_publisher.get_base_page_id.return_value = "parent-page-id"
+        mock_publisher.get_descendants.return_value = []
+
+        print_patch = mocker.patch("tovald.main.print")
+
+        cleanup(tmp_path)
+
+        mock_publisher.connect.assert_called_once()
+        mock_publisher.get_base_page_id.assert_called_once()
+        mock_publisher.get_descendants.assert_called_once_with("parent-page-id", "search-aggressive")
+        mock_publisher.remove_page.assert_not_called()
+        print_patch.assert_called_with("No child pages found to remove")
+
+    def test_cleanup_with_child_pages(self, mocker: MockerFixture, tmp_path: Path) -> None:
+        """Tests cleanup behavior when child pages exist.
+
+        Given: A documentation path with child pages
+        Expect: Function removes all child pages and reports success
+        """
+        (tmp_path / "conf.py").write_text("master_doc = 'index'\n")
+
+        mock_sphinx = mocker.Mock()
+        mock_publisher = mocker.Mock()
+        child_pages = ["page-1", "page-2", "page-3"]
+
+        mocker.patch("tovald.main.make_sphinx", return_value=mock_sphinx)
+        mock_sphinx.builder.publisher = mock_publisher
+        mock_publisher.get_base_page_id.return_value = "parent-page-id"
+        mock_publisher.get_descendants.return_value = child_pages
+
+        print_patch = mocker.patch("tovald.main.print")
+
+        cleanup(tmp_path)
+
+        mock_publisher.connect.assert_called_once()
+        mock_publisher.get_base_page_id.assert_called_once()
+        mock_publisher.get_descendants.assert_called_once_with("parent-page-id", "search-aggressive")
+        assert mock_publisher.remove_page.call_count == len(child_pages)
+        print_patch.assert_any_call(f"Removing {len(child_pages)} pages...")
+        print_patch.assert_any_call("Cleanup completed successfully")
+
+    def test_cleanup_no_parent_page(self, mocker: MockerFixture, tmp_path: Path) -> None:
+        """Tests cleanup behavior when no parent page is configured.
+
+        Given: A documentation path with no parent page configured
+        Expect: Function panics with appropriate message
+        """
+        (tmp_path / "conf.py").write_text("master_doc = 'index'\n")
+
+        mock_sphinx = mocker.Mock()
+        mock_publisher = mocker.Mock()
+
+        mocker.patch("tovald.main.make_sphinx", return_value=mock_sphinx)
+        mock_sphinx.builder.publisher = mock_publisher
+        mock_publisher.get_base_page_id.return_value = None
+
+        panic_patch = mocker.patch("tovald.main.panic")
+        panic_patch.side_effect = Exception("Halting execution")
+
+        with pytest.raises(Exception, match="Halting execution"):
+            cleanup(tmp_path)
+
+        panic_patch.assert_called_once_with("No parent page configured or found")
+
+    def test_cleanup_confluence_error(self, mocker: MockerFixture, tmp_path: Path) -> None:
+        """Tests cleanup behavior when Confluence error occurs.
+
+        Given: A documentation path where Confluence API raises an error
+        Expect: Function panics with error message
+        """
+        (tmp_path / "conf.py").write_text("master_doc = 'index'\n")
+
+        mock_sphinx = mocker.Mock()
+        mock_publisher = mocker.Mock()
+        error_message = "API connection failed"
+
+        class TestConfluenceError(Exception):
+            pass
+
+        mocker.patch("tovald.main.make_sphinx", return_value=mock_sphinx)
+        mocker.patch("tovald.main.ConfluenceError", TestConfluenceError)
+        mock_sphinx.builder.publisher = mock_publisher
+
+        mock_publisher.connect.side_effect = TestConfluenceError(error_message)
+
+        panic_patch = mocker.patch("tovald.main.panic")
+
+        cleanup(tmp_path)
+
+        panic_patch.assert_called_once_with(f"Cleanup failed: {error_message}")
 
 
 class TestMain:
