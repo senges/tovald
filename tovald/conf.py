@@ -18,11 +18,11 @@ confluence_publish_force = True
 confluence_page_hierarchy = True
 confluence_disable_notifications = True
 confluence_disable_autogen_title = True
-
 confluence_server_url = getenv("CONFLUENCE_SERVER_URL")
 confluence_space_key = getenv("CONFLUENCE_SPACE_KEY")
 confluence_parent_page = getenv("CONFLUENCE_PARENT_PAGE")
 confluence_publish_token = getenv("CONFLUENCE_PAT")
+confluence_publish_prefix = getenv("CONFLUENCE_PUBLISH_PREFIX")
 
 confluence_page_generation_notice = True
 confluence_sourcelink = {}

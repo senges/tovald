@@ -8,6 +8,8 @@ from tempfile import mkdtemp
 
 from jinja2 import Template
 from sphinx.application import Sphinx
+from sphinxcontrib.confluencebuilder.exceptions import ConfluenceError
+from sphinxcontrib.confluencebuilder.publisher import ConfluencePublisher
 
 from tovald import __version__
 
@@ -89,15 +91,15 @@ def toctree_indexer(path: Path) -> None:
             index.write(toctree)
 
 
-def publish(path: Path) -> None:
-    """Publish sphinx-formatted documentation.
+def make_sphinx(path: Path) -> Sphinx:
+    """Create Sphinx application instance.
 
     Args:
     ----
-        path (Path): sphinx documentation tree root path
+        path (Path): documentation tree root path
 
     """
-    app = Sphinx(
+    return Sphinx(
         srcdir=path,
         confdir=path,
         doctreedir=path / "_doctree",
@@ -106,7 +108,48 @@ def publish(path: Path) -> None:
         freshenv=True,
     )
 
+
+def publish(path: Path) -> None:
+    """Publish sphinx-formatted documentation.
+
+    Args:
+    ----
+        path (Path): sphinx documentation tree root path
+
+    """
+    app = make_sphinx(path)
     app.build(force_all=True)
+
+
+def cleanup(path: Path) -> None:
+    """Clean up Confluence parent page by removing all child pages.
+
+    Args:
+    ----
+        path (Path): documentation path
+
+    """
+    app = make_sphinx(path)
+
+    try:
+        if not (publisher := getattr(app.builder, "publisher", None)):
+            publisher = ConfluencePublisher()
+            publisher.init(app.config)
+
+        publisher.connect()
+
+        if not (parent_id := publisher.get_base_page_id()):
+            panic("No parent page configured or found")
+
+        # Get and remove all child pages
+        if child_pages := publisher.get_descendants(parent_id, "search-aggressive"):
+            print(f"Removing {len(child_pages)} pages...")
+            [publisher.remove_page(page_id) for page_id in child_pages]
+            print("Cleanup completed successfully")
+        else:
+            print("No child pages found to remove")
+    except ConfluenceError as e:
+        panic(f"Cleanup failed: {e}")
 
 
 def main() -> None:
@@ -115,6 +158,7 @@ def main() -> None:
 
     parser.add_argument("DOCUMENTATION")
     parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
+    parser.add_argument("-c", "--cleanup", action="store_true")
     args = parser.parse_args()
 
     documentation = Path(args.DOCUMENTATION)
@@ -124,7 +168,10 @@ def main() -> None:
     shutil.copytree(documentation, output_directory, dirs_exist_ok=True)
 
     build_sphinx_tree(output_directory)
-    publish(output_directory)
+    if args.cleanup:
+        cleanup(output_directory)
+    else:
+        publish(output_directory)
 
 
 if __name__ == "__main__":  # pragma: no cover
