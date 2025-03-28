@@ -2,10 +2,7 @@
 
 name: Run linter and tests
 
-on:
-  push:
-    branches: ["main"]
-  pull_request:
+on: push
 
 jobs:
   uv-check:
