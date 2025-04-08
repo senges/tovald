@@ -12,9 +12,10 @@ Export the following variables :
 - `CONFLUENCE_PARENT_PAGE` (optional): any parent page in a given space
 - `CONFLUENCE_PAT`: service account personal access token
 - `CONFLUENCE_SOURCES_URL` (optional): sources repository URL
+- `CONFLUENCE_PUBLISH_PREFIX` (optional): add page publication prefix
 
 ```
-usage: tovald [-h] [-v] DOCUMENTATION
+usage: tovald [-h] [-v] [-c] DOCUMENTATION
 
 positional arguments:
   DOCUMENTATION
@@ -22,6 +23,7 @@ positional arguments:
 options:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
+  -c, --cleanup
 ```
 
 ## Documentation structure
